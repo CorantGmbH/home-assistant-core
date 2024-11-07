@@ -313,6 +313,13 @@ SENSOR_TYPES: list[AirQEntityDescription] = [
         value=lambda data: data.get("pm2_5_SPS30"),
     ),
     AirQEntityDescription(
+        key="pm4_SPS30",
+        translation_key="pm4",
+        native_unit_of_measurement=CONCENTRATION_MICROGRAMS_PER_CUBIC_METER,
+        state_class=SensorStateClass.MEASUREMENT,
+        value=lambda data: data.get("pm4_SPS30"),
+    ),
+    AirQEntityDescription(
         key="pm10_SPS30",
         device_class=SensorDeviceClass.PM10,
         native_unit_of_measurement=CONCENTRATION_MICROGRAMS_PER_CUBIC_METER,

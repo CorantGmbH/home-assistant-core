@@ -13,6 +13,9 @@
       "performance_index": {
         "default": "mdi:head-check"
       },
+      "pm4": {
+        "default": "mdi:molecule"
+      },
       "radon": {
         "default": "mdi:radioactive"
       },
