@@ -107,6 +107,9 @@
       "noise": {
         "name": "Noise"
       },
+      "occupancy": {
+        "name": "Occupancy"
+      },
       "organic_acid": {
         "name": "Organic acid"
       },
