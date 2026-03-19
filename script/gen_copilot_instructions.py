@@ -52,7 +52,9 @@ def gather_skills() -> list[tuple[str, Path]]:
                 frontmatter = skill_content[3:end_idx]
                 for line in frontmatter.split("\n"):
                     if line.startswith("name:"):
-                        skill_name = line[5:].strip()
+                        parsed_name = line[5:].strip()
+                        if parsed_name:
+                            skill_name = parsed_name
                         break
 
         skills.append((skill_name, skill_file))
