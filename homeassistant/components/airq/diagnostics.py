@@ -9,6 +9,7 @@ from homeassistant.const import CONF_IP_ADDRESS, CONF_PASSWORD, CONF_UNIQUE_ID
 from homeassistant.core import HomeAssistant
 
 from . import AirQConfigEntry
+from .const import CONF_CLIP_NEGATIVE, CONF_RETURN_AVERAGE
 
 REDACT_CONFIG = {CONF_PASSWORD, CONF_UNIQUE_ID, CONF_IP_ADDRESS, "title"}
 REDACT_DEVICE_INFO = {"identifiers", "name"}
@@ -30,7 +31,7 @@ async def async_get_config_entry_diagnostics(
             coordinator.data, REDACT_COORDINATOR_DATA
         ),
         "options": {
-            "clip_negative": coordinator.clip_negative,
-            "return_average": coordinator.return_average,
+            CONF_CLIP_NEGATIVE: coordinator.clip_negative,
+            CONF_RETURN_AVERAGE: coordinator.return_average,
         },
     }

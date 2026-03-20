@@ -1,5 +1,6 @@
 """Test air-Q diagnostics."""
 
+from aioairq.core import AirQ
 import pytest
 from syrupy.assertion import SnapshotAssertion
 
@@ -19,7 +20,7 @@ FIXED_MOCK_ENTRY_ID = "01JGFJJZ008DNE3BKJ7ZE14YFE"
 async def test_entry_diagnostics(
     hass: HomeAssistant,
     hass_client: ClientSessionGenerator,
-    mock_airq,
+    mock_airq: AirQ,
     snapshot: SnapshotAssertion,
 ) -> None:
     """Test config entry diagnostics."""

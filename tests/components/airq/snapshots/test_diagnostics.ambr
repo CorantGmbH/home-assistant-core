@@ -39,7 +39,7 @@
       'sw_version': 'sw',
     }),
     'options': dict({
-      'clip_negative': True,
+      'clip_negatives': True,
       'return_average': True,
     }),
   })
