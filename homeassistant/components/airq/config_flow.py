@@ -65,9 +65,10 @@ class AirQConfigFlow(ConfigFlow, domain=DOMAIN):
         errors: dict[str, str] = {}
 
         session = async_get_clientsession(self.hass)
-        airq = AirQ(user_input[CONF_IP_ADDRESS], user_input[CONF_PASSWORD], session)
         try:
-            await airq.validate()
+            airq = await AirQ.connect(
+                user_input[CONF_IP_ADDRESS], user_input[CONF_PASSWORD], session
+            )
         except ClientConnectionError:
             _LOGGER.debug(
                 (
@@ -89,6 +90,10 @@ class AirQConfigFlow(ConfigFlow, domain=DOMAIN):
             device_info = await airq.fetch_device_info()
             await self.async_set_unique_id(device_info["id"])
             self._abort_if_unique_id_configured()
+
+            # Store the resolved address (e.g. "ca1fe" → "ca1fe_air-q.local")
+            # so the coordinator can use it directly without re-resolving.
+            user_input[CONF_IP_ADDRESS] = airq.address
 
             _LOGGER.debug("Creating an entry for %s", device_info["name"])
             return self.async_create_entry(title=device_info["name"], data=user_input)
