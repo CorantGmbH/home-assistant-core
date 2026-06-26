@@ -246,6 +246,12 @@ SENSOR_TYPES: list[AirQEntityDescription] = [
         value=lambda data: data.get("no2"),
     ),
     AirQEntityDescription(
+        key="occupancy",
+        translation_key="occupancy",
+        state_class=SensorStateClass.MEASUREMENT,
+        value=lambda data: data.get("occupancy"),
+    ),
+    AirQEntityDescription(
         key="acid_M100",
         translation_key="organic_acid",
         native_unit_of_measurement=CONCENTRATION_PARTS_PER_BILLION,

@@ -1,0 +1,65 @@
+name: "Add new air-Q sensor(s) to the HA integration"
+description: Automated — opened by the sensor-config CI when new sensors are added.
+labels: [codex]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        > **This issue is created automatically** by the
+        > [`sensor-config`](https://github.com/corantGmbH/sensor-config) CI
+        > whenever new sensors are added to `sensor_config.json`.
+  - type: textarea
+    id: new_sensors
+    attributes:
+      label: New sensor(s)
+      description: List of air-Q sensor names that were added.
+    validations:
+      required: true
+  - type: textarea
+    id: commit_message
+    attributes:
+      label: Source commit message
+      description: Commit message from the sensor-config repo that introduced the new sensor(s).
+    validations:
+      required: true
+  - type: textarea
+    id: diff
+    attributes:
+      label: Diff
+      description: The diff in `sensor_config.json` showing the added sensor(s).
+      render: diff
+    validations:
+      required: true
+  - type: textarea
+    id: instructions
+    attributes:
+      label: What to do
+      description: Step-by-step instructions for adding the sensor(s) to HA.
+      value: |
+        Add the new sensor(s) to `homeassistant/components/airq/`. Specifically:
+
+        1. **`sensor.py`** — add an `AirQEntityDescription` entry to `SENSOR_TYPES` for each new sensor.
+           Follow the existing patterns:
+           - `key` = the `name_airq` value
+           - `translation_key` = a snake_case English name
+           - Map `unit` to the matching HA constant (`%` → `PERCENTAGE`, `µg/m³` → `CONCENTRATION_MICROGRAMS_PER_CUBIC_METER`, `ppm` → `CONCENTRATION_PARTS_PER_MILLION`, etc.)
+           - Use `device_class` when HA has a matching `SensorDeviceClass`, otherwise omit it
+           - `state_class` = `SensorStateClass.MEASUREMENT`
+           - `value` lambda: `lambda data: data.get("<key>")` — or `data.get("<key>", 0.0) / 10.0` for index-type sensors
+           - Insert alphabetically by `key`
+
+        2. **`strings.json`** — add an entry under `entity.sensor.<translation_key>` with a human-readable `name`.
+
+        3. **`const.py`** — add a new unit constant only if the sensor uses a unit not already imported/defined.
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance_criteria
+    attributes:
+      label: Acceptance criteria
+      value: |
+        - New sensor(s) appear in `SENSOR_TYPES` following existing style exactly
+        - `strings.json` has matching translation entries
+        - Existing tests still pass
+    validations:
+      required: true
