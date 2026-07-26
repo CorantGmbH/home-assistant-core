@@ -267,6 +267,12 @@ SENSOR_TYPES: list[AirQEntityDescription] = [
         value=lambda data: data.get("o3"),
     ),
     AirQEntityDescription(
+        key="occupancy",
+        translation_key="occupancy",
+        state_class=SensorStateClass.MEASUREMENT,
+        value=lambda data: data.get("occupancy"),
+    ),
+    AirQEntityDescription(
         key="performance",
         translation_key="performance_index",
         native_unit_of_measurement=PERCENTAGE,
