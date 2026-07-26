@@ -47,19 +47,37 @@ jobs:
           script: |
             const issueAuthor = context.payload.issue.user.login;
 
-            // First check if user is an organization member
+            // Check if user is a repository collaborator with write access or above.
+            // This covers all members of the repository-owning organization as well
+            // as any external collaborators that have been granted access.
+            try {
+              const { data: permission } = await github.rest.repos.getCollaboratorPermissionLevel({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                username: issueAuthor
+              });
+              if (['write', 'admin', 'maintain'].includes(permission.permission)) {
+                console.log(`✅ ${issueAuthor} is a repository collaborator (${permission.permission})`);
+                return; // Authorized
+              }
+              console.log(`ℹ️ ${issueAuthor} is a collaborator but only has ${permission.permission} access, checking further...`);
+            } catch (error) {
+              console.log(`ℹ️ ${issueAuthor} is not a repository collaborator, checking org membership...`);
+            }
+
+            // Also check membership in the home-assistant organization for upstream contributors
             try {
               await github.rest.orgs.checkMembershipForUser({
                 org: 'home-assistant',
                 username: issueAuthor
               });
-              console.log(`✅ ${issueAuthor} is an organization member`);
+              console.log(`✅ ${issueAuthor} is a home-assistant organization member`);
               return; // Authorized, no need to check further
             } catch (error) {
-              console.log(`ℹ️ ${issueAuthor} is not an organization member, checking codeowners...`);
+              console.log(`ℹ️ ${issueAuthor} is not a home-assistant organization member, checking codeowners...`);
             }
 
-            // If not an org member, check if they're a codeowner
+            // If not a collaborator or org member, check if they're a codeowner
             try {
               // Fetch CODEOWNERS file from the repository
               const { data: codeownersFile } = await github.rest.repos.getContent({
@@ -91,7 +109,7 @@ jobs:
               repo: context.repo.repo,
               issue_number: context.issue.number,
               body: `Hi @${issueAuthor}, thank you for your contribution!\n\n` +
-                    `Task issues are restricted to Open Home Foundation staff, authorized contributors, and integration code owners.\n\n` +
+                    `Task issues are restricted to repository collaborators and integration code owners.\n\n` +
                     `If you would like to:\n` +
                     `- Report a bug: Please use the [bug report form](https://github.com/home-assistant/core/issues/new?template=bug_report.yml)\n` +
                     `- Request a feature: Please submit to [Feature Requests](https://github.com/orgs/home-assistant/discussions)\n\n` +
